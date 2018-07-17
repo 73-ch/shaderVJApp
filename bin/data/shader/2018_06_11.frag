@@ -47,7 +47,7 @@ void genPolygon(in float a, in float d, in float N,  in float time, in float vel
 
 void main() {
 //    time = time*1.4;
-    float s_time = time * 1.8;
+    float s_time = time * 1.0;
     vec2 st = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.y;
     
     vec3 final = vec3(.0);

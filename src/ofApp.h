@@ -31,6 +31,9 @@ class ofApp : public ofBaseApp{
     vector <shaderScene> scenes;
 //    array <shaderScene, SCENE_NUM> scenes;
     
+    
+    vec2 window_size;
+    
     vec4 seed_vec;
     array <float, 6> seeds;
     

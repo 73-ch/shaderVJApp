@@ -10,21 +10,23 @@ void ofApp::setup(){
 //    glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_SRC_ALPHA,GL_ONE);
     glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
     
+    // main_scene
+    window_size = vec2(ofGetWidth(), ofGetHeight());
+    main_scene.allocate(window_size.x, window_size.y, GL_RGBA);
     
     // generate scene
     for (int i = 0; i < SCENE_NUM; i++) {
-        scenes.push_back(*new shaderScene());
+        scenes.push_back(*new shaderScene(&window_size));
     }
     
     cout << "scenes size : " + ofToString(scenes.size()) << endl;
     
-    // main_scene
-    main_scene.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     
     // setup osc
     receiver.setup(RPORT);
     reg = R"(/[^/]*)";
     sender.setup("localhost", SPORT);
+    
 }
 
 //--------------------------------------------------------------
@@ -58,7 +60,7 @@ void ofApp::draw(){
     for (int i = 0; i < scenes.size(); i++) {
         ofPopStyle();
         ofSetColor(255, 255, 255, scenes[i].opacity);
-        scenes[i].fbo.draw(0, 0);
+        scenes[i].fbo.draw(0, window_size.y, window_size.x, -window_size.y);
         ofPushStyle();
     }
     
@@ -177,6 +179,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
+    window_size = vec2(w, h);
     for (int i = 0; i < scenes.size(); i++) {
         scenes[i].windowResized(w,h);
     }

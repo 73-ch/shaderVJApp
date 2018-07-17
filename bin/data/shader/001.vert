@@ -21,8 +21,8 @@ float rnd(vec2 n){
 }
 
 void main() {
-	vec3 position = vec3(gl_VertexID / vertex_num);
-    gl_Position = modelViewProjectionMatrix * vec4(position, 1.);
-    gl_PointSize = 100.0;
-    vcolor = vec4(1.0);
+	vec3 position = vec3(gl_VertexID / vertex_num)* 0.000001;
+    gl_Position = modelViewProjectionMatrix * vec4(vec3(.0, 10., 0.), 1.);
+    // gl_PointSize = 100.0;
+    v_color = vec4(1.0);
 }

@@ -13,7 +13,7 @@ class shaderScene {
     
 public:
     
-    shaderScene();
+    shaderScene(vec2* size);
     void update();
     void draw();
     void setVertexNum(int v_num);
@@ -48,5 +48,5 @@ private:
     
     // fragment
     ofRectangle rect;
-    vec2 screen_size;
+    vec2* screen_size;
 };

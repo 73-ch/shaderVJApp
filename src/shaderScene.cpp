@@ -8,13 +8,13 @@
 
 #include "shaderScene.h"
 
-shaderScene::shaderScene() {
+shaderScene::shaderScene(vec2* size) {
     //
     opacity = 0;
     shader_type = NONE;
 
     // vertex
-    vertex_num = 100000;
+    vertex_num = 10000000;
     
     vector<vec3> positions;
     positions.reserve(vertex_num);
@@ -23,13 +23,12 @@ shaderScene::shaderScene() {
     cam.setNearClip(0.00001);
     cam.setFarClip(10000);
     
-    
     // frangment
-    screen_size = vec2(ofGetWidth(), ofGetHeight());
+    screen_size = size;
     
-    rect.set(vec2(0), screen_size);
+    rect.set(vec2(0), *screen_size);
     
-    fbo.allocate(screen_size.x, screen_size.y, GL_RGBA);
+    fbo.allocate(screen_size->x, screen_size->y, GL_RGBA);
     
     // parameter
     for (int i = 0; i < seeds.size(); i++) {
@@ -41,9 +40,9 @@ void shaderScene::update() {
     if (shader_type == NONE) return;
     // reload shader if shader changeds
     stat(shader_path.c_str(), &stat_buf);
-    if (stat_buf.st_ctime != last_file_time) {
+    if (stat_buf.st_mtime != last_file_time) {
         cout << "shader changed" << endl;
-        cout << "current_file_time : " + ofToString(ctime(&stat_buf.st_ctime)) << endl;
+        cout << "current_file_time : " + ofToString(ctime(&stat_buf.st_mtime)) << endl;
         last_file_time = stat_buf.st_ctime;
         this->loadShader();
     };
@@ -80,7 +79,7 @@ void shaderScene::draw() {
         shader.end();
         cam.end();
     } else if (shader_type == FRAGMENT) {
-        shader.setUniform2f("u_resolution", screen_size);
+        shader.setUniform2f("u_resolution", *screen_size);
         ofDrawRectangle(rect);
         shader.end();
     }
@@ -108,7 +107,7 @@ void shaderScene::loadShader() {
         shader.load("shader/default.vert", shader_path);
     }
     stat(shader_path.c_str(), &stat_buf);
-    last_file_time = stat_buf.st_ctime;
+    last_file_time = stat_buf.st_mtime;
 }
 
 void shaderScene::changeShader(const string new_path, int type) {
@@ -120,7 +119,6 @@ void shaderScene::changeShader(const string new_path, int type) {
 }
 
 void shaderScene::windowResized(int w, int h) {
-    screen_size = vec2(w, h);
-    rect.set(vec2(0), screen_size);
-    fbo.allocate(screen_size.x, screen_size.y, GL_RGBA);
+    rect.set(vec2(0), *screen_size);
+    fbo.allocate(screen_size->x, screen_size->y, GL_RGBA);
 }
