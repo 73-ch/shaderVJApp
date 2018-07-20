@@ -45,20 +45,18 @@ float noise(vec2 st) {
                    dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
 }
 
-vec3 G(float x) {
-    float t = (.23+(x*1.25)*1.5)*PI;
-    return vec3(vec2(cos(t),sin(t))*step(-.8,-x)+vec2(cos(H_SQRT_2),(x-.8)*10.*sin(H_SQRT_2))*step(-.9,-x)*step(.80001,x)+vec2((x-.9)*cos(H_SQRT_2)*10.,0.)*step(.9,x),0.) * .5;
-}
-
-vec3 L(float x) {
-    return vec3(vec2(-.3,x*2.-.5)*step(-.5,-x)+vec2((x-.5) * 1.2-.3,.5)*step(.500001,x),.0);
-}
-
-vec3 S(float x) {
-    vec2 c = vec2(cos((x*2.)*PI_2), (abs(sin((x*2.)*PI_2))+1.) * sign(x-.250001)) * step(-.5,-x);
-    vec2 a = vec2(cos(x*PI_2), (sin(x*PI_2)+ 1.) * sign(x-.75)) * step(.5000001, x);
-    return vec3((c+a)*vec2(.3,.25),.0);
-}
+vec3 A(float x){return vec3((vec2(x*1.25-.5,((mod(x*1.25,.5)-.25)*2.)*-sign(step(.4,x)-.1))*step(-.7999,-x)+vec2((x-.8)*2.5-.25,.0)*step(.8,x))*vec2(.8,1.),0.);}
+vec3 C(float x){float t=(.25+x*1.5)*PI;return vec3(cos(t),sin(t),0.)*.5;}
+vec3 G(float x){float t=(.27+(x*1.25)*1.5)*PI;return vec3(vec2(cos(t),sin(t))*step(-.8,-x)+vec2(cos(H_SQRT_2),-(x-.8)*10.*sin(H_SQRT_2))*step(-.9,-x)*step(.80001,x)+vec2((x-.9)*cos(H_SQRT_2)*10.,0.)*step(.9,x),0.) * .5;}
+vec3 H(float x){return vec3(vec2(step(.4,x)*.6-.3,mod(x,.4)*2.5-.5)*step(-.80001,-x-.0001)+vec2((x-.8)*3.-.3,.0)*step(.8,x),.0);}
+vec3 I(float x){return vec3(0.,x-.5,0.);}
+vec3 L(float x){return vec3(vec2(-.3,x*2.-.5)*step(-.5,-x)+vec2((x-.5)*1.2-.3,-.5)*step(.500001,x),.0);}
+vec3 O(float x){return vec3(cos(x*PI_2)*.45,sin(x*PI_2)*.5,.0);}
+vec3 Q(float x){return vec3(vec2(cos(x*PI_2*1.25)*.45,sin(x*PI_2*1.25)*.5)*step(-0.8001, -x) + vec2(x-.6, -(x-.5))*step(0.8001,x),.0);}
+vec3 S(float x){return vec3((vec2(cos((x*2.)*PI_2),(abs(sin((x*2.)*PI_2))+1.)*sign(x-.250001))*step(-.5,-x)+vec2(cos(x*PI_2),(sin(x*PI_2)+1.) * sign(x-.75))*step(.5000001,x))*vec2(.3,-.25),.0);}
+vec3 T(float x){return vec3(vec2(0.,x*2.-.5)*step(-.5,-x)+vec2((x-.5)*1.2-.3,.5)*step(.500001,x),.0);}
+vec3 V(float x){return vec3((x-.5)*.8,((mod(x,.50001)-.25)*2)*sign(step(.50001,x)-.1),0.);}
+vec3 W(float x){return vec3(x-.5,(mod(x,.25)-.125)*4./(1.+step(-.24999,-abs(x-.5)))*-sign(step(-.24999999,-mod(x,.5))-.1)-.25*step(-.24999,-abs(x-.5)),.0);}
 
 
 void main(){
@@ -68,11 +66,11 @@ void main(){
     float th_x = (gl_VertexID + time * 100.) / float(vertex_num) * 2 * PI;
     float th_y = (float(vertex_num) - gl_VertexID + rnd(vec2(time, float(gl_VertexID / vertex_num))) * 100.) / float(vertex_num) * 2 * PI;
     float r = 500. * sin(2 * th_y) - 250.;
-    vec3 a_pos = vec3(cos(th_x) * cos(r)*r + rnd(vec2(gl_VertexID, 0.378347)) * 1000., rnd(vec2(cos(th_y), float(gl_VertexID / vertex_num))) + sin(th_x) * sin(r + time * 2.) * r + rnd(vec2(gl_VertexID, seed0.y)), 500. * sin(2 * th_y)  + rnd(vec2(gl_VertexID, seed0.z)) * 500.) - vec3(noise(vec2(time* 0.1, gl_VertexID)-0.25) * 4000., 0. ,0.);
+    vec3 a_pos = vec3(cos(th_x) * cos(r)*r + rnd(vec2(exp(gl_VertexID/vertex_num) /gl_VertexID, 0.378347)) * 1000., rnd(vec2(cos(th_y), rnd(vec2(float(gl_VertexID / vertex_num), 0.89393939)))) + sin(th_x) * sin(r + time * 2.) * r + rnd(vec2(gl_VertexID, seed0.y)), 500. * sin(2 * th_y)  + rnd(vec2(gl_VertexID, seed0.z)) * 500.) - vec3(noise(vec2(time* 0.1, gl_VertexID)-0.25) * 4000., 0. ,0.);
 
     vec3 l_pos = vec3(.0,.0,100000.);
     if (gl_VertexID <= L_NUM) {
-        l_pos = G(gl_VertexID * V_L_NUM)*L_SIZE+vec3(-(L_SIZE_SPAN)*3.,.0,.0);
+        l_pos = H(gl_VertexID * V_L_NUM)*L_SIZE+vec3(-(L_SIZE_SPAN)*3.,.0,.0);
     } else if(gl_VertexID <= L_NUM *2.) {
         l_pos = L((gl_VertexID - L_NUM) * V_L_NUM) * L_SIZE+vec3(-(L_SIZE_SPAN),.0,.0);
     } else if(gl_VertexID <= L_NUM* 3.) {
@@ -88,5 +86,6 @@ void main(){
     vec3 x_pos = l_pos * smoothstep(1.0, 4.0, time_x) + a_pos * smoothstep(-4.0, -1.0, -time_x);
 
     gl_Position = modelViewProjectionMatrix * vec4(x_pos, 1.0);
+    gl_PointSize = 2.0;
     v_color = vec4(1.0);
 }
