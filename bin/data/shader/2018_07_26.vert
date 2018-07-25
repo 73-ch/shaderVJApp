@@ -1,4 +1,3 @@
-
 #version 150
 
 #define PI 3.141592653589793
@@ -11,9 +10,8 @@
 #define SPAN 20.
 #define L_SIZE_SPAN L_SIZE/2.+SPAN
 
-#define L_NUM 250000.
-#define V_L_NUM 0.000004
-
+#define L_NUM 500000.
+#define V_L_NUM 0.000002
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -28,6 +26,7 @@ out vec4 v_color;
 float rnd(vec2 n){
     return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
 }
+
 vec2 random2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
               dot(st,vec2(269.5,183.3)) );
@@ -48,7 +47,7 @@ float noise(vec2 st) {
 }
 
 vec3 A(float a){return vec3((vec2(a*1.25-.5,((mod(a*1.25,.5)-.25)*2.)*-sign(step(.4,a)-.1))*step(-.7999,-a)+vec2((a-.8)*2.5-.25,.0)*step(.8,a))*vec2(.8,1.),0.);}
-vec3 B(float a){return vec3(vec2(max(cos(PI_2*a),-.5)*.75-.25,sin(PI_2*a)/max(step(0.,cos(PI_2*a)),max(abs(sin(PI_2*a)),SQRT_3))*(1.-step(-.5,cos(PI_2*a))*.5)+.5*step(-.5,cos(PI_2*a))*sign(mod(a,.001)-.00051))*.5,0.);}
+vec3 B(float a){return vec3(vec2(max(cos(PI_2*a),-.5)*.75-.25,sin(PI_2*a)/max(step(0.,cos(PI_2*a)),max(abs(sin(PI_2*a)),SQRT_3))*(1.-step(-.5,cos(PI_2*a))*.5)+.5*step(-.5,cos(PI_2*a))*sign(mod(a,.00001)-.0000051))*.5,0.);}
 vec3 C(float a){return vec3(cos((.25+a*1.5)*PI),sin((.25+a*1.5)*PI),0.)*.5;}
 vec3 D(float a){return vec3(vec2(max(cos(PI_2*a),-.5)-.25,sin(PI_2*a)/max(step(0.,cos(PI_2*a)),max(abs(sin(PI_2*a)),SQRT_3)))*.5,0.);}
 vec3 E(float a){return vec3(vec2(max(3.6*mod(a,.33333),.6)-.9,min(-0.5+floor(a*3.)+step(-0.166666,-mod(a,.333333)),max((mod(a,.333333)*3.-.5)*sign(-a+.33333), -1.+.5*(floor(3.*a-.000001)+1.)*step(.166666,mod(a,.333333))))),.0);}
@@ -70,29 +69,30 @@ vec3 T(float a){return vec3(vec2(0.,a*2.-.5)*step(-.5,-a)+vec2((a-.5)*1.6-.4,.5)
 vec3 U(float a){return vec3(vec2(max(cos(PI_2*a), step(.001,sin(PI_2*a))*2.-1.)*sign(.00001+cos(PI_2*a)+step(.001,-sin(PI_2*a)))*.6,sin(PI_2*a)*(1.+2.*step(.0,sin(PI_2*a)))*.5-.5)*.5,0.);}
 vec3 V(float a){return vec3((a-.5)*.8,((mod(a,.50001)-.25)*2)*sign(step(.50001,a)-.1),0.);}
 vec3 W(float a){return vec3((a-.5)*.9,(mod(a,.25)-.125)*4./(1.+step(-.24999,-abs(a-.5)))*-sign(step(-.24999999,-mod(a,.5))-.1)-.25*step(-.24999,-abs(a-.5)),.0);}
-vec3 X(float a){return vec3(vec2(1.2*mod(a,.50001)-.3,(mod(a,.50001)*2.-.5)*sign(a-.50001)),.0);}
-vec3 Y(float a){return vec3(vec2((1.2*mod(a,.50001)-.3)*sign(a-.50001)*step(.25,mod(a,.50001)),(mod(a,.50001)*2.-.5)),.0);}
+vec3 X(float a){return vec3(vec2(1.2*mod(a,.5000001)-.3,(mod(a,.5000001)*2.-.5)*sign(a-.5000001)),.0);}
+vec3 Y(float a){return vec3(vec2((1.2*mod(a,.5000001)-.3)*sign(a-.5000001)*step(.25,mod(a,.5000001)),(mod(a,.5000001)*2.-.5)),.0);}
 vec3 Z(float a){return vec3(vec2(mod(a,.33333333)*2.4-.4,sign(a*2.-1.)*min(abs(a*3.-1.5),.5)),.0);}
-
 
 void main(){
 
-    vec3 pos = vec3(.0,.0,100000.);
-    if (gl_VertexID <= L_NUM) {
-        pos = Z(gl_VertexID * V_L_NUM)*L_SIZE+vec3(-(L_SIZE_SPAN)*3.,.0,.0);
-    } else if(gl_VertexID <= L_NUM *2.) {
-        pos = A((gl_VertexID - L_NUM) * V_L_NUM) * L_SIZE+vec3(-(L_SIZE_SPAN),.0,.0);
-    } else if(gl_VertexID <= L_NUM* 3.) {
-        pos = W((gl_VertexID - L_NUM * 2.) * V_L_NUM) * L_SIZE+vec3(L_SIZE_SPAN,.0,.0);
-    } else if(gl_VertexID <= L_NUM*4.) {
-        pos = I((gl_VertexID - L_NUM*3.) * V_L_NUM) * L_SIZE+vec3((L_SIZE_SPAN)*3.,.0,.0);
-    }
+    float x = float(gl_VertexID)/vertex_num;
 
-   // pos *= sin(time + gl_VertexID * 0.000002);
+    vec3 a_pos = X(x) * 300.+vec3(-500.,0.,0.);
+    vec3 b_pos = G(x) * 300.+vec3(500.,0.,0.);
 
-   gl_PointSize = 1.0;
+    vec3 c_pos = vec3(sin(cos(x+time)+time*rnd(vec2(0.98793875, x)) + exp(x))* 200, cos(cos(x+time)+time*sin(rnd(vec2(0.98793875, x))) + exp(x)) * 100., 1.);
 
-    gl_Position = modelViewProjectionMatrix * vec4(pos,1.0);
-    // v_color = vec4(0.3, noise(vec2(gl_VertexID/ vertex_num * seed0.x, time * seed0.y)), 1.0, 1.0);
+    // l_pos *= sin(time + gl_VertexID * 0.000002);
+
+    float time_x = mod(time*.25, 1.0)*2.;
+
+    // a_pos.x += min(mod(time*.5, 2.0), 1.0) * 1000.-500.;
+
+    // b_pos.x -= min(mod(time*.5+1., 2.0), 1.0) * 1000.-500.;
+
+    vec3 x_pos = a_pos * smoothstep(0.0, 1.0-rnd(vec2(0.98793875, x)), time_x) * smoothstep(-2.+rnd(vec2(0.98793875, x)),-1., -time_x) + b_pos * (smoothstep(-1.+rnd(vec2(0.98793875, x)), -0., -time_x)+ smoothstep(1.0, 2.0-rnd(vec2(0.98793875, x)), time_x)) + c_pos*(smoothstep(0.0,1.,time_x)*smoothstep(-1.,0.,-time_x)+smoothstep(1.0,2.,time_x)*smoothstep(-2.,1.,-time_x));
+
+    gl_Position = modelViewProjectionMatrix * vec4(x_pos, 1.0);
+    // gl_PointSize = 2.0;
     v_color = vec4(1.0);
 }
