@@ -95,5 +95,5 @@ void main(){
 
     gl_Position = modelViewProjectionMatrix * vec4(x_pos, 1.0);
     // gl_PointSize = 2.0;
-    v_color = vec4(time_x/3.);
+    v_color = vec4(0.,time_x/3,0.0,1.);
 }

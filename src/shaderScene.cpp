@@ -67,6 +67,8 @@ void shaderScene::draw() {
     shader.setUniform1f("time", ofGetElapsedTimef());
     shader.setUniform4f("seed0", seeds[0]);
     shader.setUniform4f("seed1", seeds[1]);
+    shader.setUniform4f("seed2", seeds[2]);
+    shader.setUniform4f("seed3", seeds[3]);
     shader.setUniform3f("cam_pos", cam.getPosition());
     
     ofSetColor(255);
