@@ -116,6 +116,8 @@ void ofApp::dumpOSC(ofxOscMessage m) {
         }
     } else if (first == "vertex_num") {
         scenes[target].setVertexNum(m.getArgAsInt(0));
+    } else if (first == "mode") {
+        scenes[target].mode = ofPrimitiveMode(m.getArgAsInt(0));
     }
     
     for (int i=0; i<m.getNumArgs(); i++ ) {

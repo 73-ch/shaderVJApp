@@ -26,6 +26,8 @@ public:
 
     array <vec4, 4> seeds;
     int opacity;
+    ofPrimitiveMode mode;
+    
     
     ofCamera cam;
     
@@ -44,7 +46,6 @@ private:
     // vertex
     int vertex_num;
     ofVboMesh vbo;
-    ofPrimitiveMode mode;
     
     // fragment
     ofRectangle rect;

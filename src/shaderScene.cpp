@@ -34,6 +34,8 @@ shaderScene::shaderScene(vec2* size) {
     for (int i = 0; i < seeds.size(); i++) {
         seeds[i] = vec4(ofRandom(1), ofRandom(1), ofRandom(1), ofRandom(1));
     }
+    
+    mode = OF_PRIMITIVE_POINTS;
 }
 
 void shaderScene::update() {
@@ -75,7 +77,8 @@ void shaderScene::draw() {
     
     if (shader_type == VERTEX) {
         shader.setUniform1i("vertex_num", vertex_num);
-        vbo.setMode(OF_PRIMITIVE_POINTS);
+//        vbo.setMode(OF_PRIMITIVE_POINTS);
+        vbo.setMode(ofPrimitiveMode(mode));
         cam.begin();
         vbo.draw();
         shader.end();
